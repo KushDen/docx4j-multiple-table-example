@@ -25,6 +25,7 @@ public class Start implements CommonTrait
     private final TableTemplate tableTemplate2;
     private final TextTemplate textTemplate1;
     private final TextTemplate textTemplate2;
+    private final TextTemplate textTemplate3;
     private final DataRepository repository = new DataRepository();
 
     private Start() throws Exception
@@ -35,6 +36,7 @@ public class Start implements CommonTrait
         tableTemplate2 = new TableTemplate(getTemplateTable(documentPart, 1));
         textTemplate1 = new TextTemplate(getTemplateP(documentPart, 0));
         textTemplate2 = new TextTemplate(getTemplateP(documentPart, 1));
+        textTemplate3 = new TextTemplate(getTemplateP(documentPart, 2));
     }
 
     private void fillTemplate() throws Exception
@@ -48,6 +50,7 @@ public class Start implements CommonTrait
         tableTemplate2.fillWithDataMy(Arrays.asList("2", "Денис", "Имя", "public", "3"));
         textTemplate1.fillWithDataMy("2");
         textTemplate2.fillWithDataMy("3");
+        textTemplate3.fillWithDataMy("456");
             //documentPart.getContent().add(createPageBreak());
 
         //}
@@ -84,7 +87,7 @@ public class Start implements CommonTrait
 
     private P getTemplateP(MainDocumentPart documentPart, int numberP)
     {
-        return (P) getAllElementFromObject(documentPart, P.class).get(numberP);
+        return (P) getElementPFromObject(documentPart, P.class).get(numberP);
     }
 
     private P createPageBreak()
