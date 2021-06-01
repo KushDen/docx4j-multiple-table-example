@@ -7,6 +7,7 @@ import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,35 +15,43 @@ import java.util.Map;
 
 public class Start implements CommonTrait
 {
-    private static final String TEMPLATE_DOCX = "template.docx";
-    private static final String OUT_GENERATED_DOCX = "/tmp/OUT_generated.docx";
+    private static final String TEMPLATE_DOCX = "templateMy.docx";
+    private static final String OUT_GENERATED_DOCX = "OUT_generated.docx";
     private static final int DRIVERS_PER_TABLE = 6;
     private final WordprocessingMLPackage wordMLPackage;
     private final MainDocumentPart documentPart;
 
-    private final TableTemplate tableTemplate;
+    private final TableTemplate tableTemplate1;
+    private final TableTemplate tableTemplate2;
+    private final TextTemplate textTemplate1;
+    private final TextTemplate textTemplate2;
     private final DataRepository repository = new DataRepository();
 
     private Start() throws Exception
     {
         wordMLPackage = WordprocessingMLPackage.load(new File(Start.class.getResource(TEMPLATE_DOCX).getFile()));
         documentPart = wordMLPackage.getMainDocumentPart();
-        tableTemplate = new TableTemplate(XmlUtils.deepCopy(getTemplateTable(documentPart)));
+        tableTemplate1 = new TableTemplate(getTemplateTable(documentPart, 0));
+        tableTemplate2 = new TableTemplate(getTemplateTable(documentPart, 1));
+        textTemplate1 = new TextTemplate(getTemplateP(documentPart, 0));
+        textTemplate2 = new TextTemplate(getTemplateP(documentPart, 1));
     }
 
     private void fillTemplate() throws Exception
     {
-        documentPart.getContent().clear();
-        while (!repository.getDrivers().isEmpty())
-        {
-            List<Driver> drivers = repository.getDrivers().subList(0, getToIndex());
+        //documentPart.getContent().clear();
+        //while (!repository.getDrivers().isEmpty())
+        //{
 
-            documentPart.getContent().add(tableTemplate.fillWithData(repository.getStations(), drivers));
-            documentPart.getContent().add(createPageBreak());
-            drivers.clear();
+            //tableTemplate.fillWithData(repository.getStations(), drivers);
+        tableTemplate1.fillWithDataMy(Arrays.asList("1", "Denis", "Имя", "secret", "2"));
+        tableTemplate2.fillWithDataMy(Arrays.asList("2", "Денис", "Имя", "public", "3"));
+        textTemplate1.fillWithDataMy("2");
+        textTemplate2.fillWithDataMy("3");
+            //documentPart.getContent().add(createPageBreak());
 
-        }
-        clearUnfilledData();
+        //}
+        //clearUnfilledData();
 
         Docx4J.save(wordMLPackage, new File(OUT_GENERATED_DOCX));
     }
@@ -68,9 +77,14 @@ public class Start implements CommonTrait
     }
 
 
-    private Tbl getTemplateTable(MainDocumentPart documentPart)
+    private Tbl getTemplateTable(MainDocumentPart documentPart, int numberTable)
     {
-        return (Tbl) getAllElementFromObject(documentPart, Tbl.class).get(0);
+        return (Tbl) getAllElementFromObject(documentPart, Tbl.class).get(numberTable);
+    }
+
+    private P getTemplateP(MainDocumentPart documentPart, int numberP)
+    {
+        return (P) getAllElementFromObject(documentPart, P.class).get(numberP);
     }
 
     private P createPageBreak()

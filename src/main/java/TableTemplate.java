@@ -17,7 +17,7 @@ class TableTemplate implements CommonTrait
 
     TableTemplate(Tbl table) throws Exception
     {
-        this.table = XmlUtils.deepCopy(table);
+        this.table = table;
         List<Object> rows = getAllElementFromObject(this.table, Tr.class);
         headerRowAsString = XmlUtils.marshaltoString(prepareVariables(rows.get(0)));
         dataRow = XmlUtils.marshaltoString(prepareVariables(rows.get(rows.size() - 1)));
@@ -25,7 +25,7 @@ class TableTemplate implements CommonTrait
 
     Tbl fillWithData(List<GasStation> gasStations, List<Driver> drivers) throws Exception
     {
-        Tbl localTable = XmlUtils.deepCopy(table);
+        Tbl localTable = table;
         localTable.getContent().clear();
 
         localTable.getContent().add(getFilledHeaderRow(drivers));
@@ -34,6 +34,20 @@ class TableTemplate implements CommonTrait
         {
             localTable.getContent().add(getFilledDataRow(drivers, gs));
         }
+
+        return localTable;
+    }
+
+    Tbl fillWithDataMy(List<String> data) throws Exception
+    {
+        Tbl localTable = table;
+        localTable.getContent().clear();
+
+        localTable.getContent().add(getFilledHeaderRowMy(data));
+
+        //localTable.getContent().add(getFilledDataRowMy());
+
+        //localTable.getContent().add(getFilledDataRowMyNew());
 
         return localTable;
     }
@@ -52,6 +66,34 @@ class TableTemplate implements CommonTrait
         return XmlUtils.unmarshalString(strSubstitutor.replace(dataRow));
     }
 
+    private Object getFilledDataRowMy() throws JAXBException
+    {
+        Map<String, String> mappings = new HashMap<>();
+        mappings.put("1", "new");
+        mappings.put("2", "new");
+        mappings.put("3", "new");
+        mappings.put("4", "new");
+        mappings.put("5", "new");
+
+        StrSubstitutor strSubstitutor = new StrSubstitutor(mappings);
+
+        return XmlUtils.unmarshalString(strSubstitutor.replace(dataRow));
+    }
+
+    private Object getFilledDataRowMyNew() throws JAXBException
+    {
+        Map<String, String> mappings = new HashMap<>();
+        mappings.put("1", "new");
+        mappings.put("2", "new");
+        mappings.put("3", "new");
+        mappings.put("4", "new");
+        mappings.put("5", "new");
+
+        StrSubstitutor strSubstitutor = new StrSubstitutor(mappings);
+
+        return XmlUtils.unmarshalString(strSubstitutor.replace(dataRow));
+    }
+
     private Object getFilledHeaderRow(List<Driver> drivers) throws JAXBException
     {
         Map<String, String> mappings = new HashMap<>(drivers.size());
@@ -63,5 +105,15 @@ class TableTemplate implements CommonTrait
         return XmlUtils.unmarshalString(strSubstitutor.replace(headerRowAsString));
     }
 
-
+    private Object getFilledHeaderRowMy(List<String> data) throws JAXBException
+    {
+        Map<String, String> mappings = new HashMap<>(5);
+        mappings.put("nb", data.get(0));
+        mappings.put("type", data.get(1));
+        mappings.put("value", data.get(2));
+        mappings.put("secret", data.get(3));
+        mappings.put("nb_doc", data.get(4));
+        StrSubstitutor strSubstitutor = new StrSubstitutor(mappings);
+        return XmlUtils.unmarshalString(strSubstitutor.replace(headerRowAsString));
+    }
 }
